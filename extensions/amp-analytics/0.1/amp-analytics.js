@@ -46,6 +46,8 @@ variableServiceFor(AMP.win);
 
 const MAX_REPLACES = 16; // The maximum number of entries in a extraUrlParamsReplaceMap
 
+const hasOwn = Object.prototype.hasOwnProperty;
+
 export class AmpAnalytics extends AMP.BaseElement {
 
   /** @param {!AmpElement} element */
@@ -171,7 +173,7 @@ export class AmpAnalytics extends AMP.BaseElement {
     const promises = [];
     // Trigger callback can be synchronous. Do the registration at the end.
     for (const k in this.config_['triggers']) {
-      if (this.config_['triggers'].hasOwnProperty(k)) {
+      if (hasOwn.call(this.config_['triggers'], k)) {
         const trigger = this.config_['triggers'][k];
         const expansionOptions = this.expansionOptions_(
             {}, trigger, undefined, true);
@@ -377,7 +379,7 @@ export class AmpAnalytics extends AMP.BaseElement {
       return;
     }
     for (const k in this.config_['requests']) {
-      if (this.config_['requests'].hasOwnProperty(k)) {
+      if (hasOwn.call(this.config_['requests'], k)) {
         requests[k] = this.config_['requests'][k];
       }
     }
@@ -570,7 +572,7 @@ export class AmpAnalytics extends AMP.BaseElement {
       user().assert(opt_predefinedConfig || property != 'iframePing',
           'iframePing config is only available to vendor config.');
       // Only deal with own properties.
-      if (from.hasOwnProperty(property)) {
+      if (hasOwn.call(from, property)) {
         if (isArray(from[property])) {
           if (!isArray(to[property])) {
             to[property] = [];
