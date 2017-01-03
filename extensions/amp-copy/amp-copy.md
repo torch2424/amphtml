@@ -28,7 +28,7 @@ limitations under the License.
   </tr>
   <tr>
     <td width="40%"><strong>Required Script</strong></td>
-    <td><code>&lt;script async custom-element="amp-gfycat" src="https://cdn.ampproject.org/v0/amp-gfycat-0.1.js">&lt;/script></code></td>
+    <td><code>&lt;script async custom-element="amp-copy" src="https://cdn.ampproject.org/v0/amp-copy-0.1.js">&lt;/script></code></td>
   </tr>
   <tr>
     <td class="col-fourty"><strong><a href="https://www.ampproject.org/docs/guides/responsive/control_layout.html">Supported Layouts</a></strong></td>
@@ -37,57 +37,25 @@ limitations under the License.
   <tr>
     <td width="40%"><strong>Examples</strong></td>
     <td>
-      <a href="https://github.com/ampproject/amphtml/blob/master/examples/gfycat.amp.html">Source</a>
-      <a href="https://cdn.rawgit.com/ampproject/amphtml/master/examples/gfycat.amp.html">Rendered</a>
+      <a href="https://github.com/ampproject/amphtml/blob/master/examples/copy.amp.html">Source</a>
+      <a href="https://cdn.rawgit.com/ampproject/amphtml/master/examples/copy.amp.html">Rendered</a>
     </td>
   </tr>
 </table>
 
 ## Example
 
-Gfycat embed with responsive layout:
+Text Copy with responsive layout:
 
 ```html
-  <amp-gfycat
-          data-gfyid="TautWhoppingCougar"
-          width="640"
-          height="360"
+  <amp-copy
+          copy-text="Copy me!"
           layout="responsive">
-  </amp-gfycat>
+  </amp-copy>
 ```
 
 ## Attributes
 
-**data-gfyid**
+**copy-text**
 
-In the url https://gfycat.com/TautWhoppingCougar gfyid is `TautWhoppingCougar`, can be found in any Gfycat url.
-
-**width** and **height**
-
-The width and height attributes are special for the Gfycat embed. These should be the actual width and height of the Gfycat. The system automatically adds space for the "chrome" that Gfycat adds around the GIF.
-
-Gfycat allows many aspect ratios.
-
-To specify the width and height in the code, please copy it from the embed URL. You can see these values by going to:
-https://gfycat.com/name
-Click on the embed link </>. Copy the width and height specified in the fixed IFRAME field.
-
-**Example:**
-
-```html
-<iframe src='https://gfycat.com/ifr/TautWhoppingCougar' frameborder='0' scrolling='no' width='640' height='360' allowfullscreen></iframe>
-```
-**noautoplay**
-
-By default video is autoplaying. It's possible to turn it off by setting `noautoplay` attribute.
-
-**Example:**
-
-```html
-  <amp-gfycat
-          data-gfyid="TautWhoppingCougar"
-          width="640"
-          height="360"
-          noautoplay>
-  </amp-gfycat>
-```
+The text that will be displayed with an accompanying button to copy the text
