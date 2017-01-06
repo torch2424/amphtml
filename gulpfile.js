@@ -63,6 +63,7 @@ declareExtension('amp-brid-player', '0.1', false);
 declareExtension('amp-brightcove', '0.1', false);
 declareExtension('amp-kaltura-player', '0.1', false);
 declareExtension('amp-carousel', '0.1', true);
+declareExtension('amp-copy', '0.1', false);
 declareExtension('amp-dailymotion', '0.1', false);
 declareExtension('amp-dynamic-css-classes', '0.1', false, 'NO_TYPE_CHECK');
 declareExtension('amp-experiment', '0.1', false, 'NO_TYPE_CHECK');
@@ -136,7 +137,7 @@ function declareExtension(name, version, hasCssOrOptions, opt_noTypeCheck,
   if (typeof hasCssOrOptions == 'boolean') {
     hasCss = hasCssOrOptions;
   } else {
-    options = hasCssOrOptions
+    options = hasCssOrOptions;
   }
   extensions[name + '-' + version] = Object.assign({
     name: name,
@@ -182,26 +183,26 @@ function compile(watch, shouldMinify, opt_preventRemoveAndMakeDir,
   compileCss();
   compileJs('./3p/', 'integration.js',
       './dist.3p/' + (shouldMinify ? internalRuntimeVersion : 'current'), {
-    minifiedName: 'f.js',
-    checkTypes: opt_checkTypes,
-    watch: watch,
-    minify: shouldMinify,
-    preventRemoveAndMakeDir: opt_preventRemoveAndMakeDir,
-    externs: ['ads/ads.extern.js',],
-    include3pDirectories: true,
-    includePolyfills: true,
-  });
+        minifiedName: 'f.js',
+        checkTypes: opt_checkTypes,
+        watch: watch,
+        minify: shouldMinify,
+        preventRemoveAndMakeDir: opt_preventRemoveAndMakeDir,
+        externs: ['ads/ads.extern.js',],
+        include3pDirectories: true,
+        includePolyfills: true,
+      });
 
   compileJs('./3p/', 'ampcontext-lib.js',
       './dist.3p/' + (shouldMinify ? internalRuntimeVersion : 'current'), {
-    minifiedName: 'ampcontext-v0.js',
-    checkTypes: opt_checkTypes,
-    watch: watch,
-    minify: false,
-    preventRemoveAndMakeDir: opt_preventRemoveAndMakeDir,
-    externs: ['ads/ads.extern.js',],
-    includeBasicPolyfills: false,
-  });
+        minifiedName: 'ampcontext-v0.js',
+        checkTypes: opt_checkTypes,
+        watch: watch,
+        minify: false,
+        preventRemoveAndMakeDir: opt_preventRemoveAndMakeDir,
+        externs: ['ads/ads.extern.js',],
+        includeBasicPolyfills: false,
+      });
 
   // For compilation with babel we start with the amp-babel entry point,
   // but then rename to the amp.js which we've been using all along.
@@ -275,7 +276,7 @@ function compile(watch, shouldMinify, opt_preventRemoveAndMakeDir,
   var nameFrameHtml = '3p/nameframe.max.html';
   thirdPartyBootstrap(nameFrameHtml, 'nameframe.html',shouldMinify);
   if (watch) {
-    $$.watch(nameFrameHtml, function () {
+    $$.watch(nameFrameHtml, function() {
       thirdPartyBootstrap(nameFrameHtml, 'nameframe.html', shouldMinify);
     });
   }
@@ -551,11 +552,11 @@ var activeBundleOperationCount = 0;
  * @param {Array<string>} files List of file paths to concatenate
  */
 function concatFiles(destFilePath, files) {
-	var all = files.map(function(filePath) {
-		return fs.readFileSync(filePath, 'utf-8');
+	    var all = files.map(function(filePath) {
+		    return fs.readFileSync(filePath, 'utf-8');
 	});
 
-	fs.writeFileSync(destFilePath, all.join(';'), 'utf-8');
+	    fs.writeFileSync(destFilePath, all.join(';'), 'utf-8');
 }
 
 /**
@@ -607,7 +608,7 @@ function compileJs(srcDir, srcFilename, destDir, options) {
     return;
   }
   var bundler = browserify(srcDir + srcFilename, {debug: true})
-      .transform(babel, { loose: argv.strictBabelTransform ? undefined : 'all' });
+      .transform(babel, {loose: argv.strictBabelTransform ? undefined : 'all'});
   if (options.watch) {
     bundler = watchify(bundler);
   }
@@ -880,7 +881,7 @@ function checkMinVersion() {
 function mkdirSync(path) {
   try {
     fs.mkdirSync(path);
-  } catch(e) {
+  } catch (e) {
     if (e.code != 'EEXIST') {
       throw e;
     }

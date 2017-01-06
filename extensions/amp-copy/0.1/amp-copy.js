@@ -17,66 +17,74 @@
 import {isLayoutSizeDefined} from '../../../src/layout';
 import {user} from '../../../src/log';
 
-class AmpGfycat extends AMP.BaseElement {
+class AmpCopy extends AMP.BaseElement {
 
   /** @param {!AmpElement} element */
   constructor(element) {
     super(element);
 
     /**
+     * @private {?Attribute}
+     */
+    this.copyText_ = null;
+
+    /**
      * @private {?Element}
      */
-    this.iframe_ = null;
-  }
+    this.displayedText_ = null;
 
- /**
-  * @param {boolean=} opt_onLayout
-  * @override
-  */
-  preconnectCallback(opt_onLayout) {
-    // Gfycat iframe
-    this.preconnect.url('https://gfycat.com', opt_onLayout);
-
-    // Iframe video and poster urls
-    this.preconnect.url('https://giant.gfycat.com', opt_onLayout);
-    this.preconnect.url('https://thumbs.gfycat.com', opt_onLayout);
+    /**
+     * @private {?Element}
+     */
+    this.copyBtn_ = null;
   }
 
   /** @override */
-  isLayoutSupported(layout) {
-    return isLayoutSizeDefined(layout);
+  buildCallback() {
+    //Get our copy text attribute
+    this.copyText_ = this.element.getAttribute('copy-text');
+
+    //Create the displayed text element
+    this.displayedText_ = this.element.ownerDocument.createElement('p');
+    this.displayedText_.textContent = this.copyText_;
+
+    //Create the Copy Button element
+    this.copyBtn_ = this.element.ownerDocument.createElement('button');
+    this.copyBtn_.textContent = 'Copy';
+
+    //Add the created the elements
+    this.element.appendChild(this.displayedText_);
+    this.element.appendChild(this.copyBtn_);
   }
 
   /** @override */
-  layoutCallback() {
-    const gfyid = user().assert(
-      this.element.getAttribute('data-gfyid'),
-      'The data-gfyid attribute is required for <amp-gfycat> %s',
-      this.element);
-    const noautoplay = this.element.hasAttribute('noautoplay');
-
-    const iframe = this.element.ownerDocument.createElement('iframe');
-    iframe.setAttribute('frameborder', '0');
-
-    let src = 'https://gfycat.com/ifr/' + encodeURIComponent(gfyid);
-    if (noautoplay) {
-      src += '?autoplay=0';
-    }
-
-    iframe.src = src;
-    this.applyFillContent(iframe);
-    this.element.appendChild(iframe);
-    this.iframe_ = iframe;
-
-    return this.loadPromise(iframe);
-  }
+  // isLayoutSupported(layout) {
+  //   return isLayoutSizeDefined(layout);
+  // }
 
   /** @override */
-  pauseCallback() {
-    if (this.iframe_ && this.iframe_.contentWindow) {
-      this.iframe_.contentWindow./*OK*/postMessage('pause', '*');
-    }
-  }
+  // layoutCallback() {
+  //   const gfyid = user().assert(
+  //     this.element.getAttribute('data-gfyid'),
+  //     'The data-gfyid attribute is required for <amp-gfycat> %s',
+  //     this.element);
+  //   const noautoplay = this.element.hasAttribute('noautoplay');
+  //
+  //   const iframe = this.element.ownerDocument.createElement('iframe');
+  //   iframe.setAttribute('frameborder', '0');
+  //
+  //   let src = 'https://gfycat.com/ifr/' + encodeURIComponent(gfyid);
+  //   if (noautoplay) {
+  //     src += '?autoplay=0';
+  //   }
+  //
+  //   iframe.src = src;
+  //   this.applyFillContent(iframe);
+  //   this.element.appendChild(iframe);
+  //   this.iframe_ = iframe;
+  //
+  //   return this.loadPromise(iframe);
+  // }
 }
 
-AMP.registerElement('amp-gfycat', AmpGfycat);
+AMP.registerElement('amp-copy', AmpCopy);
