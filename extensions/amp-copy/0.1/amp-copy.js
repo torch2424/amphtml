@@ -50,11 +50,20 @@ class AmpCopy extends AMP.BaseElement {
 
     //Create the Copy Button element
     this.copyBtn_ = this.element.ownerDocument.createElement('button');
+    this.copyBtn_.addEventListener('click', this.copyBtnClick_);
     this.copyBtn_.textContent = 'Copy';
 
     //Add the created the elements
     this.element.appendChild(this.displayedText_);
     this.element.appendChild(this.copyBtn_);
+  }
+
+  /** Function attatched to copy button to copy text */
+  /**
+   * @private {?Function}
+   */
+  copyBtnClick_() {
+    console.log('Copy Callback Called!');
   }
 
   /** @override */
