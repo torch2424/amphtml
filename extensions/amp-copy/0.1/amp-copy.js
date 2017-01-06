@@ -45,7 +45,7 @@ class AmpCopy extends AMP.BaseElement {
     this.copyText_ = this.element.getAttribute('copy-text');
 
     //Create the displayed text element
-    this.displayedText_ = this.element.ownerDocument.createElement('p');
+    this.displayedText_ = this.element.ownerDocument.createElement('span');
     this.displayedText_.textContent = this.copyText_;
 
     //Create the Copy Button element
