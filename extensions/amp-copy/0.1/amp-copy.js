@@ -54,6 +54,7 @@ class AmpCopy extends AMP.BaseElement {
     this.copyBtn_.textContent = 'Copy';
 
     //Add the created the elements
+    console.log('I am alive!');
     this.element.appendChild(this.displayedText_);
     this.element.appendChild(this.copyBtn_);
   }
