@@ -58,6 +58,9 @@ export class AmpSidebar extends AMP.BaseElement {
     /** @private {string|undefined} */
     this.dock_ = undefined;
 
+    /** @private {string|undefined} */
+    this.toolbar_ = undefined;
+
     const platform = platformFor(this.win);
 
     /** @private @const {boolean} */
@@ -166,6 +169,17 @@ export class AmpSidebar extends AMP.BaseElement {
   /** @override */
   onLayoutMeasure() {
     console.log('hi! layout measure');
+    // Remove and add the dock class dynamically
+    if(isDocked_() && !this.element.classList.contains('i-amphtml-sidebar-dock')) {
+      this.element.classname += ' i-amphtml-sidebar-dock';
+      /*
+        Add the following css to the body:
+        left: //sidebar-width
+        width: calc(100% - sidebar-width);
+      */
+    } else if(!isDocked_() && this.element.classList.contains('i-amphtml-sidebar-dock')) {
+      this.element.classname = this.element.classname.replace(' i-amphtml-sidebar-dock', '');
+    }
   }
 
   /**
@@ -186,8 +200,8 @@ export class AmpSidebar extends AMP.BaseElement {
     if(!this.dock_) {
       return false
     } else {
-      console.log('Am I docked?', this.element.ownerDocument.matchMedia(this.dock_).matches)
-      return this.element.ownerDocument.matchMedia(this.dock_).matches
+      console.log('Am I docked?', this.element.ownerDocument.defaultView.matchMedia(this.dock_).matches)
+      return this.element.ownerDocument.defaultView.matchMedia(this.dock_).matches
     }
   }
 

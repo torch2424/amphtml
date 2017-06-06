@@ -61,3 +61,8 @@ amp-sidebar[side] {
   background-color: #000;
   z-index: 2147483646;
 }
+
+.i-amphtml-sidebar-dock {
+  transform: translateX(0) !important;
+  display: block;
+}
