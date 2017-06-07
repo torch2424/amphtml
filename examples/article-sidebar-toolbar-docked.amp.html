@@ -224,23 +224,30 @@
 </head>
 <body>
   <amp-sidebar id="sidebar" layout="nodisplay" dock="(min-width: 1024px)">
-    <nav>
+
+    <!-- Toolbar elements -->
+    <nav toolbar="(min-width: 0px) and (max-width: 1023px)" toolbar-only>
       <ul>
         <li>
           <a href="#">
             Home
-            <amp-img src="img/ampicon.png" width="15" height="15"></amp-img>
+            <!-- Adding the style tag to override amp-sidebar toolbar's default display: inline -->
+            <amp-img src="img/ampicon.png" width="15" height="15" style="display: inline-block"></amp-img>
           </a>
         </li>
-        <li><a href="#">Link 1</a></li>
-        <li><a href="#">Link 2</a></li>
-        <li><a href="#">Link 3</a></li>
-        <li><a href="#">Link 4</a></li>
-        <li><a href="#section1">Section 1</a></li>
-        <li><a href="#section2">Section 2</a></li>
-        <li><a href="#section3">Section 3</a></li>
       </ul>
     </nav>
+
+    <!-- Sidebar only elements -->
+    <ul>
+      <li><a href="#">Link 1</a></li>
+      <li><a href="#">Link 2</a></li>
+      <li><a href="#">Link 3</a></li>
+      <li><a href="#">Link 4</a></li>
+      <li><a href="#section1">Section 1</a></li>
+      <li><a href="#section2">Section 2</a></li>
+      <li><a href="#section3">Section 3</a></li>
+    </ul>
   </amp-sidebar>
   <amp-app-banner layout="nodisplay" id="demo-app-banner-2134">
     <div class="content">

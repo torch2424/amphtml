@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {CSS} from '../../../build/amp-sidebar-0.1.css';
+import {CSS} from '../../../build/amp-sidebar-1.0.css';
 import {KeyCodes} from '../../../src/utils/key-codes';
 import {closestByTag, tryFocus} from '../../../src/dom';
 import {Layout} from '../../../src/layout';
@@ -61,6 +61,15 @@ export class AmpSidebar extends AMP.BaseElement {
     /** @private {string|undefined} */
     this.toolbar_ = undefined;
 
+    /** @private {?Element} */
+    this.toolbarNav_ = undefined;
+
+    /** @private {?Element} */
+    this.toolbarClone_ = undefined;
+
+    /** @private {?Element} */
+    this.toolbarHeader_ = undefined;
+
     const platform = platformFor(this.win);
 
     /** @private @const {boolean} */
@@ -101,9 +110,22 @@ export class AmpSidebar extends AMP.BaseElement {
       this.element.setAttribute('side', this.side_);
     }
 
-    // Get the dock attribute to determine if the sidebar is docked at the current media resolution
     if(this.element.hasAttribute('dock')) {
       this.dock_ = this.element.getAttribute('dock');
+    }
+
+    // Get the toolbar attribute from the nav
+    if(this.element.hasChildNodes && this.element.getElementsByTagName('nav').length === 1) {
+      const navElement = this.element.getElementsByTagName('nav')[0];
+      if(navElement.hasAttribute('toolbar')) {
+        this.toolbarNav_ = navElement;
+        this.toolbar_ = navElement.getAttribute('toolbar');
+      }
+
+      // Find or create a header element on the document for our toolbar
+      if (this.element.ownerDocument.getElementsByTagName('header').length > 0) {
+        this.toolbarHeader_ = this.element.ownerDocument.getElementsByTagName('header')[0];
+      }
     }
 
     if (this.isIosSafari_) {
@@ -168,17 +190,41 @@ export class AmpSidebar extends AMP.BaseElement {
 
   /** @override */
   onLayoutMeasure() {
-    console.log('hi! layout measure');
-    // Remove and add the dock class dynamically
-    if(isDocked_() && !this.element.classList.contains('i-amphtml-sidebar-dock')) {
-      this.element.classname += ' i-amphtml-sidebar-dock';
+
+    // Remove and add the docking dynamically
+    if(this.isDocked_() && !this.element.hasAttribute('docked')) {
+
+      this.element.setAttribute('docked', '');
+
+      // Close the sidebar if it is opened, to remove the mask
+      if(this.isOpen_()) {
+        this.close_();
+      }
+
       /*
         Add the following css to the body:
-        left: //sidebar-width
-        width: calc(100% - sidebar-width);
+        padding-left: //body width + side-bar width
       */
-    } else if(!isDocked_() && this.element.classList.contains('i-amphtml-sidebar-dock')) {
-      this.element.classname = this.element.classname.replace(' i-amphtml-sidebar-dock', '');
+    } else if(!this.isDocked_() && this.element.hasAttribute('docked')) {
+      this.element.removeAttribute('docked');
+    }
+
+    // Remove and add the toolbar dynamically
+    if (this.isToolbar_() && !this.toolbarHeader_.hasAttribute('toolbar')) {
+      // Add the toolbar elements
+      this.toolbarClone_ = this.toolbarNav_.cloneNode(true);
+      this.toolbarHeader_.appendChild(this.toolbarClone_);
+      if(this.toolbarNav_.hasAttribute('toolbar-only')) {
+        this.toolbarNav_.style.display = 'none';
+      }
+      this.toolbarHeader_.setAttribute('toolbar', '');
+    } else if (!this.isToolbar_() && this.toolbarHeader_.hasAttribute('toolbar')) {
+      // Remove the elements and the attribute
+      this.toolbarHeader_.removeChild(this.toolbarClone_);
+      if(this.toolbarNav_.hasAttribute('toolbar-only')) {
+        this.toolbarNav_.style.display = null;
+      }
+      this.toolbarHeader_.removeAttribute('toolbar');
     }
   }
 
@@ -198,10 +244,22 @@ export class AmpSidebar extends AMP.BaseElement {
    */
   isDocked_() {
     if(!this.dock_) {
-      return false
+      return false;
     } else {
-      console.log('Am I docked?', this.element.ownerDocument.defaultView.matchMedia(this.dock_).matches)
-      return this.element.ownerDocument.defaultView.matchMedia(this.dock_).matches
+      return this.element.ownerDocument.defaultView.matchMedia(this.dock_).matches;
+    }
+  }
+
+  /**
+   * Returns if the sidebar is currently in toolbar media query
+   * @returns {boolean}
+   * @private
+   */
+  isToolbar_() {
+    if(!this.toolbar_) {
+      return false;
+    } else {
+      return this.element.ownerDocument.defaultView.matchMedia(this.toolbar_).matches;
     }
   }
 
@@ -265,7 +323,7 @@ export class AmpSidebar extends AMP.BaseElement {
    * @private
    */
   close_() {
-    if (!this.isOpen_() || this.isDocked_()) {
+    if (!this.isOpen_() && !this.isDocked_()) {
       return;
     }
     this.viewport_.leaveOverlayMode();
