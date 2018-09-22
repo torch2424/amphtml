@@ -25,7 +25,7 @@ We hope you'll become an ongoing participant in our open source community but we
   * [Working groups](#working-groups)
   * [See Also](#see-also)
 ## Reporting issues with AMP
-
+ayyyeee
 ### Bugs
 
 If you find a bug in AMP, please [file a GitHub issue](https://github.com/ampproject/amphtml/issues/new).  Members of the community are regularly monitoring issues and will try to fix open bugs quickly according to our [prioritization guidelines](./contributing/issue-priorities.md).
