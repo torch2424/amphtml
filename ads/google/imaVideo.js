@@ -326,6 +326,20 @@ export function imaVideo(global, data) {
   });
   controlsDiv.appendChild(fullscreenDiv);
 
+  // Mute button
+  muteDiv = createIcon(global, 'mute');
+  muteDiv.id = 'ima-mute';
+  setStyles(muteDiv, {
+    'width': '30px',
+    'height': '30px',
+    'font-size': '1.25em',
+    'cursor': 'pointer',
+    'text-align': 'center',
+    'font-weight': 'bold',
+    'line-height': '1.4em',
+  });
+  controlsDiv.appendChild(muteDiv);
+
   // Ad container.
   adContainerDiv = global.document.createElement('div');
   adContainerDiv.id = 'ima-ad-container';
