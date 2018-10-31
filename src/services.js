@@ -248,6 +248,17 @@ export class Services {
   }
 
   /**
+   * Returns service implemented in service/hidden-attribute-mutation-observer.
+   * @param {!Element|!./service/ampdoc-impl.AmpDoc} elementOrAmpDoc
+   * @return {!./service/hidden-attribute-mutation-observer.HiddenAttributeMutationObserver}
+   */
+  static hiddenAttributeMutationObserverForDoc(elementOrAmpDoc) {
+    return /** @type {!./service/hidden-attribute-mutation-observer.HiddenAttributeMutationObserver} */ (
+      getServiceForDoc(elementOrAmpDoc, 'hidden-attribute-mutation-observer'));
+  }
+
+
+  /**
    * Returns service implemented in service/history-impl.
    * @param {!Element|!./service/ampdoc-impl.AmpDoc} elementOrAmpDoc
    * @return {!./service/history-impl.History}

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {Pass} from './pass';
 import {Services} from './services';
 import {SubscriptionApi} from './iframe-helper';
 import {dev} from './log';
@@ -236,24 +235,20 @@ export class IntersectionObserverPolyfill {
      */
     this.observeEntries_ = [];
 
-    /**
-     * Mutation observer to fire off on visibility changes
-     * @private {?MutationObserver}
-     */
-    this.mutationObserver_ = null;
+    /** @private {?./service/hidden-attribute-mutation-observer.HiddenAttributeMutationObserver} */
+    this.hiddenAttributeMutationObserver_ = null;
 
-    /** @private {?./service/viewport/viewport-impl.Viewport} */
-    this.viewport_ = null;
-
-    /** @private {?Pass} */
-    this.mutationPass_ = null;
+    /** @private {?Function} */
+    this.disposeHiddenAttributeMutationObserver_ = null;
   }
 
   /**
    */
   disconnect() {
     this.observeEntries_.length = 0;
-    this.disconnectMutationObserver_();
+    if (this.disposeHiddenAttributeMutationObserver_) {
+      this.disposeHiddenAttributeMutationObserver_();
+    }
   }
 
   /**
@@ -290,26 +285,17 @@ export class IntersectionObserverPolyfill {
 
 
     // Add a mutation observer to tick ourself
-    // TODO (@torch2424): Allow this to observe elements,
-    // from multiple documents.
-    const ampdoc = Services.ampdoc(element);
-    if (ampdoc.win.MutationObserver && !this.mutationObserver_) {
-      this.viewport_ = Services.viewportForDoc(element);
-      this.mutationPass_ = new Pass(ampdoc.win, () => {
-        if (this.viewport_) {
-          this.tick(this.viewport_.getRect());
-        }
-      });
-      this.mutationObserver_ = new ampdoc.win.MutationObserver(
-          this.handleMutationObserverNotification_.bind(this)
-      );
-      this.mutationObserver_.observe(ampdoc.win.document, {
-        attributes: true,
-        attributeFilter: ['hidden'],
-        subtree: true,
-      });
+    if (!this.hiddenAttributeMutationObserver_) {
+      this.hiddenAttributeMutationObserver_ = Services.hiddenAttributeMutationObserverForDoc(element);
     }
-
+    const ampdoc = Services.ampdoc(element);
+    const viewport = Services.viewportForDoc(element);
+    this.disposeHiddenAttributeMutationObserver_ = 
+      this.hiddenAttributeMutationObserver_.register(() => {
+        console.log('ayyeee');
+      this.tick(viewport);
+    });
+    
     // push new observed element
     this.observeEntries_.push(newState);
   }
@@ -323,8 +309,9 @@ export class IntersectionObserverPolyfill {
     for (let i = 0; i < this.observeEntries_.length; i++) {
       if (this.observeEntries_[i].element === element) {
         this.observeEntries_.splice(i, 1);
-        if (this.observeEntries_.length <= 0) {
-          this.disconnectMutationObserver_();
+        if (this.observeEntries_.length <= 0 &&
+          this.disposeHiddenAttributeMutationObserver_) {
+          this.disposeHiddenAttributeMutationObserver_();
         }
         return;
       }
@@ -413,36 +400,6 @@ export class IntersectionObserverPolyfill {
         (opt_iframe ? null : hostViewport), intersectionRect, ratio);
     changeEntry.target = element;
     return changeEntry;
-  }
-
-  /**
-   * Handle Mutation Oberserver events
-   * @private
-   */
-  handleMutationObserverNotification_() {
-    if (this.mutationPass_.isPending()) {
-      return;
-    }
-
-    // Wait one animation frame so that other mutations may arrive.
-    this.mutationPass_.schedule(16);
-    return;
-  }
-
-  /**
-   * Clean up the mutation observer
-   * @private
-   */
-  disconnectMutationObserver_() {
-    if (this.mutationObserver_) {
-      this.mutationObserver_.disconnect();
-    }
-    this.mutationObserver_ = null;
-    this.viewport_ = null;
-    if (this.mutationPass_) {
-      this.mutationPass_.cancel();
-    }
-    this.mutationPass_ = null;
   }
 }
 
