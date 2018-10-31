@@ -50,7 +50,7 @@ import {installActionServiceForDoc} from '../service/action-impl';
 import {installCidService} from '../service/cid-impl';
 import {installDocumentInfoServiceForDoc} from '../service/document-info-impl';
 import {installGlobalSubmitListenerForDoc} from '../document-submit';
-import {installHiddenMutationObserverForDoc} from './service/hidden-attribute-mutation-observer';
+import {installHiddenAttributeMutationObserverForDoc} from './service/hidden-attribute-mutation-observer';
 import {installHistoryServiceForDoc} from '../service/history-impl';
 import {installResourcesServiceForDoc} from '../service/resources-impl';
 import {installStandardActionsForDoc} from '../service/standard-actions-impl';
@@ -132,7 +132,7 @@ function installAmpdocServices(ampdoc, opt_initParams) {
   installDocumentInfoServiceForDoc(ampdoc);
   installViewerServiceForDoc(ampdoc, opt_initParams); // TODO: to be simplified
   installInaboxViewportService(ampdoc); // TODO: to be simplified
-  installHiddenMutationObserverForDoc(ampdoc);
+  installHiddenAttributeMutationObserverForDoc(ampdoc);
   installHistoryServiceForDoc(ampdoc);
   installResourcesServiceForDoc(ampdoc); // TODO: to be simplified
   installUrlReplacementsServiceForDoc(ampdoc);

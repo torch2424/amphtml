@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Pass} from './pass';
-import {Services} from './services';
+import {Pass} from '../pass';
+import {Services} from '../services';
 import {
   registerServiceBuilderForDoc,
 } from '../service';
@@ -54,11 +54,11 @@ export class HiddenAttributeMutationObserver {
    * @return {Function}
    */
   register(callback) {
-    if (this.callbacks.length <= 0) {
+    if (this.callbacks_.length <= 0) {
       this.initialize_();
     }
-    this.callbacks.push(callback);
-    return this.unregister.bind(this, callback);
+    this.callbacks_.push(callback);
+    return this.unregister_.bind(this, callback);
   }
 
   /**
@@ -70,14 +70,13 @@ export class HiddenAttributeMutationObserver {
   initialize_() {
     if (this.ampdoc_.win.MutationObserver && 
       !this.mutationObserver_) {
-      this.viewport_ = Services.viewportForDoc(ampdoc);
-      this.mutationPass_ = new Pass(ampdoc.win, () => {
+      this.mutationPass_ = new Pass(this.ampdoc_.win, () => {
         this.handleMutationPassEvent_.bind(this);
       });
-      this.mutationObserver_ = new ampdoc.win.MutationObserver(
+      this.mutationObserver_ = new this.ampdoc_.win.MutationObserver(
         this.handleMutationObserverNotification_.bind(this)
       );
-      this.mutationObserver_.observe(ampdoc.win.document, {
+      this.mutationObserver_.observe(this.ampdoc_.win.document, {
         attributes: true,
         attributeFilter: ['hidden'],
         subtree: true,
@@ -89,9 +88,9 @@ export class HiddenAttributeMutationObserver {
    * Function to unregister a callback on the mutation observer
    */
   unregister_(callback) {
-    this.callbacks.splice(this.callbacks.indexOf(callback), 1);
+    this.callbacks_.splice(this.callbacks_.indexOf(callback), 1);
 
-    if (this.callbacks.length <= 1) {
+    if (this.callbacks_.length <= 1) {
       this.disconnect_();
     }
   }
@@ -115,7 +114,7 @@ export class HiddenAttributeMutationObserver {
    * @private
    */
   handleMutationPassEvent_() {
-    this.callbacks.forEach(callback => {
+    this.callbacks_.forEach(callback => {
       callback();
     });
   }

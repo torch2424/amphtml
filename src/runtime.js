@@ -60,7 +60,7 @@ import {installDocumentInfoServiceForDoc} from './service/document-info-impl';
 import {installDocumentStateService} from './service/document-state';
 import {installGlobalNavigationHandlerForDoc} from './service/navigation';
 import {installGlobalSubmitListenerForDoc} from './document-submit';
-import {installHiddenMutationObserverForDoc} from './service/hidden-attribute-mutation-observer';
+import {installHiddenAttributeMutationObserverForDoc} from './service/hidden-attribute-mutation-observer';
 import {installHistoryServiceForDoc} from './service/history-impl';
 import {installInputService} from './input';
 import {installPlatformService} from './service/platform-impl';
@@ -122,7 +122,7 @@ export function installAmpdocServices(ampdoc, opt_initParams) {
   installDocumentInfoServiceForDoc(ampdoc);
   installViewerServiceForDoc(ampdoc, opt_initParams);
   installViewportServiceForDoc(ampdoc);
-  installHiddenMutationObserverForDoc(ampdoc);
+  installHiddenAttributeMutationObserverForDoc(ampdoc);
   installHistoryServiceForDoc(ampdoc);
   installResourcesServiceForDoc(ampdoc);
   installUrlReplacementsServiceForDoc(ampdoc);
