@@ -185,6 +185,44 @@ app.use('/analytics/:type', (req, res) => {
 });
 
 /**
+ * Routes for testing / simulating amp-access
+ */
+const ampAccessState = {
+  loggedIn: false,
+  subscriber: false
+};
+
+app.use('/access/authorization', (req, res) => {
+  res.setHeader('AMP-Access-Control-Allow-Source-Origin', 'http://localhost:8000');
+  res.json(ampAccessState);
+});
+
+app.use('/access/login', (req, res) => {
+  ampAccessState.loggedIn = true;
+  res.end(`
+     <h1>Amp-access Logged in!<h1>
+     <h2>Restart the dev server to undo these changes</h2>
+  `);
+});
+
+app.use('/access/logout', (req, res) => {
+  ampAccessState.loggedIn = false;
+  res.end(`
+     <h1>Amp-access Logged out!<h1>
+     <h2>Restart the dev server to undo these changes</h2>
+  `);
+});
+
+app.use('/access/subscribe', (req, res) => {
+  ampAccessState.subscriber = true;
+  res.end(`
+     <h1>Amp-access Subscribed!<h1>
+     <h2>Restart the dev server to undo these changes</h2>
+  `);
+});
+
+
+/**
  * In practice this would be *.ampproject.org and the publishers
  * origin. Please see AMP CORS docs for more details:
  *    https://goo.gl/F6uCAY
