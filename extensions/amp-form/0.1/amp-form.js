@@ -547,10 +547,13 @@ export class AmpForm {
     return this.waitOnPromisesOrTimeout_(
         presubmitPromises,
         SUBMIT_TIMEOUT
-    ).then(
-        () => this.handlePresubmitSuccess_(trust, event),
-        error => this.handlePresubmitError_(/**@type {!Error}*/(error))
-    );
+    ).then(response => {
+
+      console.log('Hello!', response);
+
+      this.handlePresubmitSuccess_(trust, event);
+    },
+    error => this.handlePresubmitError_(/**@type {!Error}*/(error)));
   }
 
   /**
