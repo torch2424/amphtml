@@ -247,6 +247,7 @@ export function makeBodyVisible(doc) {
     bodyMadeVisible = true;
     setBodyVisibleStyles(doc);
     renderStartedNoInline(doc);
+    debugger;
   };
 
   waitForBodyPromise(doc)

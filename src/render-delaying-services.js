@@ -63,7 +63,7 @@ export function waitForServices(win) {
         `Render timeout waiting for service ${service} to be ready.`
     );
   });
-  return Promise.all(promises);
+  return Promise.all(promises).then(() => {console.log('Done waiting!');});
 }
 
 /**

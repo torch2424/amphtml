@@ -126,6 +126,7 @@ export class AmpExperiment extends AMP.BaseElement {
   addToBody_(experimentName, variantName) {
     const doc = this.getAmpDoc();
     return doc.whenBodyAvailable().then(body => {
+      console.log('Applied experiment!');
       body.setAttribute(ATTR_PREFIX + experimentName,
         dev().assertString(variantName));
     });
