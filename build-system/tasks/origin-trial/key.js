@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-// Do NOT commit this key
+// WARNING: Do NOT commit this key
+// You CAN and SHOULD ignore changes in this file by running:
+// git update-index --assume-unchanged build-system/tasks/origin-trial/key.js
 const key = {};
 
 module.exports = key;
