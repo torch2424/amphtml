@@ -21,6 +21,14 @@ import {
   TokenMaster
 } from '../../../src/service/origin-experiments-impl.js';
 
+const tokenMaster = new TokenMaster(crypto, {
+  parse: () => {
+    return {
+      origin: 'test'
+    }
+  }
+});
+
 const keyData = options.key;
 const algo = {
   name: 'RSASSA-PKCS1-v1_5',
@@ -44,5 +52,11 @@ const keyPromise = crypto.subtle.importKey('jwk',
 );
 
 keyPromise.then(key => {
+  console.log('Got Key!');
   return tokenMaster.generateToken(0, config, key);
+}).then(token => {
+  console.log(token);
+}).catch(err => {
+  console.log(err.message);
 });
+

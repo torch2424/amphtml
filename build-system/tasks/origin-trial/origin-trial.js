@@ -23,6 +23,9 @@ const colors = require('ansi-colors');
 const {execOrDie} = require('../../exec');
 const log = require('fancy-log');
 
+// Get our private key
+const key = require('./key.js');
+
 /**
  * Entry point for 'gulp origin-trial'
  * @return {!Promise}
@@ -78,20 +81,21 @@ async function originTrial() {
   log('info', 'Starting', colors.cyan('puppeteer'), '...');
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-
-  log(options.key);
+  // https://github.com/GoogleChrome/puppeteer/issues/2301
+  await page.goto('file:///');
+  page.on('console', consoleObj => log(colors.yellow('Puppeteer Console:'), consoleObj.text()));
 
   // TODO: Generate a token
-  await page.evaluate(`
+  const tokenScript = `
     const options = {
-      key: ${options.key},
+      key: ${JSON.stringify(key)},
       origin: '${options.origin}',
       experiment: '${options.experiment}',
       days: ${options.days}
     };
-    options.key = JSON.parse(options.key);
     ${tokenGeneratorJs}
-  `)
+  `;
+  await page.evaluate(tokenScript)
 
   // TODO: Verify the token
 
