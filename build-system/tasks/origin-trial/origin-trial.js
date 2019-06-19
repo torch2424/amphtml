@@ -86,20 +86,29 @@ async function originTrial() {
   page.on('console', consoleObj => log(colors.yellow('Puppeteer Console:'), consoleObj.text()));
 
   // TODO: Generate a token
-  const tokenScript = `
+  let tokenScript = `
     const options = {
       key: ${JSON.stringify(key)},
       origin: '${options.origin}',
       experiment: '${options.experiment}',
       days: ${options.days}
     };
+    logConstructor = () => {};
     ${tokenGeneratorJs}
   `;
+  // Mock out devAssert
+  tokenScript = tokenScript.replace(
+    'exports.devAssert = devAssert;',
+    'exports.devAssert = () => {};'
+  );
   await page.evaluate(tokenScript)
 
   // TODO: Verify the token
 
   // TODO: Print the token with Instructions
+
+  // Cleanup
+  // await browser.close();
 }
 
 module.exports = {

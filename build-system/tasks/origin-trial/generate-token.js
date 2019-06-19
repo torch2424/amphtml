@@ -17,9 +17,14 @@
 // Options passed in from puppeteer.evaluate
 
 import {
-  OriginExperiments,
+  // OriginExperiments,
   TokenMaster
 } from '../../../src/service/origin-experiments-impl.js';
+import {
+  Crypto
+} from '../../../src/service/crypto-impl.js';
+
+const crypto = new Crypto(window);
 
 const tokenMaster = new TokenMaster(crypto, {
   parse: () => {
@@ -28,6 +33,8 @@ const tokenMaster = new TokenMaster(crypto, {
     }
   }
 });
+
+console.log('asdasd');
 
 const keyData = options.key;
 const algo = {
