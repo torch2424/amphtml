@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "name": "gulp-origin-trial",
+  "version": "0.1.0",
+  "description": "Gulp Origin Trial",
+  "dependencies": {
+    "puppeteer": "1.9.0"
+  }
+}
