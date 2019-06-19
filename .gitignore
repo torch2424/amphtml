@@ -31,4 +31,4 @@ firebase
 .firebaserc
 firebase.json
 .firebase/
-# build-system/tasks/origin-trial/key.js
+build-system/tasks/origin-trial/key.js
