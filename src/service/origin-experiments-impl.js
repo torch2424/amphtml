@@ -25,7 +25,7 @@ import {user} from '../log';
 const TAG = 'OriginExperiments';
 
 /** @const {!webCrypto.JsonWebKey} */
-const PUBLIC_JWK = /** @type {!webCrypto.JsonWebKey} */ ({
+export const PUBLIC_JWK = /** @type {!webCrypto.JsonWebKey} */ ({
   'alg': 'RS256',
   'e': 'AQAB',
   'ext': true,

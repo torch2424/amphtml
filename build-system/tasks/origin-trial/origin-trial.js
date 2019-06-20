@@ -57,12 +57,18 @@ async function originTrial() {
     if (argv[optionKey]) {
       options[optionKey] = argv[optionKey];
     } else {
-      log(`Missing the required "${optionKey}" flag. Please use "gulp help" to see usage`);
+      log(colors.red('Error:'), `Missing the required "${optionKey}" flag. Please use "gulp help" to see usage`);
       missingRequiredOptions = true;
     }
   });
 
   if (missingRequiredOptions) {
+    return;
+  }
+
+  // Check that we have a key
+  if (!key || Object.keys(key).length < 1) {
+    log(colors.red('Error:'), 'Missing the key object in build-system/tasks/origin-trial/key.js .');
     return;
   }
 
@@ -138,20 +144,27 @@ async function originTrial() {
   // Print the token with Instructions
   if (token === 'ERROR') {
     log(
-      colors.red('There was an error getting the token.') +
-      'Please see rhe above error'
+      colors.red('There was an error getting the token.'),
+      'Please see the above error.'
     );
     return;
   }
 
-  console.log('Got token', token);
+  // Out put the results
+  log(colors.green('---RESULTS---'));
+  log(colors.green('Token:'), token);
+  log(colors.green('Origin:'), options.origin);
+  log(colors.green('Experiment Name:'), options.experiment);
+  log(colors.green('Expiration Date:'), expirationDate.toString());
+  log('Please see:', colors.cyan('go/amp-origin-trial-usage'),
+    'for more information on sending the token information.');
 }
 
 module.exports = {
   originTrial
 };
 
-originTrial.description = 'Generate an origin trial for an origin and experiment';
+originTrial.description = 'Generate an origin trial for an origin and experiment. Requires the private key to be placed in: build-system/tasks/origin-trial/key.js';
 originTrial.flags = {
   'origin': '  [REQUIRED] Full Origin that should match including protocol. E.g https://amp.dev',
   'experiment': ' [REQUIRED] Name of the experiment to enable by the origin trial.',

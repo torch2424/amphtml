@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-// options, tokenKey passed in from puppeteer.evaluate
+// @fileoverview This implements a token generation similar to:
+// test/unit/test-origin-experiments
+// And verifies the created token.
+
+// NOTE: options, tokenKey passed in from puppeteer.evaluate
 
 import {
   TokenMaster,
@@ -53,18 +57,24 @@ const keyPromise = crypto.subtle.importKey('jwk',
   ['sign']
 );
 
+console.log('INFO:', 'Generating our Crypto Key...');
+
 let token = undefined;
 keyPromise.then(key => {
+  console.log('INFO:', 'Generating our Token...');
   return tokenMaster.generateToken(0, config, key);
 }).then(responseToken => {
   // Save our token
   token = responseToken;
 
   // Next let's verify the token
+  console.log('INFO:', 'Getting our Public Key...');
   return crypto.importPkcsKey(PUBLIC_JWK);
 }).then(publicKey => {
+  console.log('INFO:', 'Verifying the token against the origin and public key...');
   return tokenMaster.verifyToken(token, options.origin, publicKey);
 }).then(() => {
+  console.log('INFO:', 'Success! Returning the token...');
   // Since we did not reject, we are verified
   // We verified the token, go ahead and respond with it
   console.log(tokenKey + token);
