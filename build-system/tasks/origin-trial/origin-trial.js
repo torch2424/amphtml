@@ -26,6 +26,20 @@ const log = require('fancy-log');
 // Get our private key
 const key = require('./key.js');
 
+// Function to listen for a message from the pupeteer page
+function listenForKeyFromConsole(page, key) {
+  return new Promise(resolve => {
+    const logHandler = (consoleObj) => {
+      let text = consoleObj.text();
+      if (text.startsWith(key)) {
+        page.removeListener('console', logHandler);
+        resolve(text.replace(key, ''));
+      }
+    }
+    page.on('console', logHandler);
+  });
+}
+
 /**
  * Entry point for 'gulp origin-trial'
  * @return {!Promise}
@@ -51,6 +65,11 @@ async function originTrial() {
   if (missingRequiredOptions) {
     return;
   }
+
+  // Create our date timestamp
+  const expirationDate = new Date();
+  expirationDate.setDate(expirationDate.getDate() + options.days);
+  const expirationTimestamp = expirationDate.getTime();
 
   // Compile our OriginExperiments and TokenMaster
   const bundleTokenGenerator = new Promise((resolve, reject) => {
@@ -83,17 +102,23 @@ async function originTrial() {
   const page = await browser.newPage();
   // https://github.com/GoogleChrome/puppeteer/issues/2301
   await page.goto('file:///');
-  page.on('console', consoleObj => log(colors.yellow('Puppeteer Console:'), consoleObj.text()));
+  page.on('console', consoleObj => {
+    const text = consoleObj.text();
+    if (text.startsWith('INFO:')) {
+      log(colors.yellow('Puppeteer Console:'), text.replace('INFO:', ''));
+    }
+  });
 
-  // TODO: Generate a token
+  // Run our Token Generator
+  const tokenKey = 'TOKEN:';
   let tokenScript = `
     const options = {
       key: ${JSON.stringify(key)},
       origin: '${options.origin}',
       experiment: '${options.experiment}',
-      days: ${options.days}
+      expirationTimestamp: ${expirationTimestamp}
     };
-    logConstructor = () => {};
+    const tokenKey = "${tokenKey}";
     ${tokenGeneratorJs}
   `;
   // Mock out devAssert
@@ -101,14 +126,25 @@ async function originTrial() {
     'exports.devAssert = devAssert;',
     'exports.devAssert = () => {};'
   );
-  await page.evaluate(tokenScript)
-
-  // TODO: Verify the token
-
-  // TODO: Print the token with Instructions
+  const tokenResponse = await Promise.all([
+    listenForKeyFromConsole(page, tokenKey),
+    page.evaluate(tokenScript)
+  ]);
+  const token = tokenResponse[0];
 
   // Cleanup
-  // await browser.close();
+  await browser.close();
+
+  // Print the token with Instructions
+  if (token === 'ERROR') {
+    log(
+      colors.red('There was an error getting the token.') +
+      'Please see rhe above error'
+    );
+    return;
+  }
+
+  console.log('Got token', token);
 }
 
 module.exports = {

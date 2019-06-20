@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-// Options passed in from puppeteer.evaluate
+// options, tokenKey passed in from puppeteer.evaluate
 
 import {
-  // OriginExperiments,
-  TokenMaster
+  TokenMaster,
+  PUBLIC_JWK
 } from '../../../src/service/origin-experiments-impl.js';
 import {
   Crypto
@@ -29,12 +29,10 @@ const crypto = new Crypto(window);
 const tokenMaster = new TokenMaster(crypto, {
   parse: () => {
     return {
-      origin: 'test'
-    }
+      origin: options.origin
+    };
   }
 });
-
-console.log('asdasd');
 
 const keyData = options.key;
 const algo = {
@@ -42,13 +40,10 @@ const algo = {
   hash: {name: 'SHA-256'},
 };
 
-const expirationDate = new Date();
-expirationDate.setDate(options.days);
-
 const config = {
   origin: options.origin,
   experiment: options.experiment,
-  expiration: expirationDate,
+  expiration: options.expirationTimestamp,
 };
 
 const keyPromise = crypto.subtle.importKey('jwk',
@@ -58,12 +53,22 @@ const keyPromise = crypto.subtle.importKey('jwk',
   ['sign']
 );
 
+let token = undefined;
 keyPromise.then(key => {
-  console.log('Got Key!');
   return tokenMaster.generateToken(0, config, key);
-}).then(token => {
-  console.log(token);
-}).catch(err => {
-  console.log(err.message);
-});
+}).then(responseToken => {
+  // Save our token
+  token = responseToken;
 
+  // Next let's verify the token
+  return crypto.importPkcsKey(PUBLIC_JWK);
+}).then(publicKey => {
+  return tokenMaster.verifyToken(token, options.origin, publicKey);
+}).then(() => {
+  // Since we did not reject, we are verified
+  // We verified the token, go ahead and respond with it
+  console.log(tokenKey + token);
+}).catch(err => {
+  console.log('INFO:', err.message);
+  console.log(tokenKey + 'ERROR');
+});
